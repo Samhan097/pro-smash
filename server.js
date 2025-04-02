@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8080;
 // connectDB();
 
 // app.use(express.json()); 
@@ -22,6 +22,6 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   // connectDB()
-  console.log(`Server Started on PORT http://localhost:${port}`);
+  console.log(`Server Started on PORT http://localhost:${port}`); 
 });
 // OwHH5YTCzLCa8cQj
