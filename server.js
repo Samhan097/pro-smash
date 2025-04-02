@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 });
 app.use('/api/auth',authRouter)
 
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
   // connectDB()
   console.log(`Server Started on PORT http://localhost:${port}`);
 });
