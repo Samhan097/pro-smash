@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.send("Server is Live");
 });
 app.get("/test", (req, res) => {
-  res.send("Server is Live");
+  res.send("Testing server");
 });
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
