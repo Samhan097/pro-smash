@@ -1,18 +1,14 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import express from "express";
 import userModel from "../models/userModel.js";
 import transporter from "../config/nodemailer.js";
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { username,fullname, email,dateOfBirth, mobileNumber, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!username || !fullname || !email || !dateOfBirth || !mobileNumber || !password) {
     return res.json({ success: false, message: "Missing Details" });
   }
-  // console.log("SMTP_USER:", process.env.SMTP_USER);
-  // console.log("SMTP_PASS:", process.env.SMTP_PASS ? "Loaded" : "Missing");
-  // console.log("SENDER_EMAIL:", process.env.SENDER_EMAIL);
   try {
     const exsistingUser = await userModel.findOne({ email });
 
@@ -22,7 +18,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new userModel({ name, email, password: hashedPassword });
+    const user = new userModel({ username,fullname, email,dateOfBirth,mobileNumber, password: hashedPassword });
     await user.save();
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -222,3 +218,39 @@ export const sendResetOtp = async (req,res) =>{
     return res.json({success:false, message: error.message})
   }
 }
+
+// Reset User Password
+export const resetPassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  // Validate request body
+  if (!email || !otp || !newPassword) {
+    return res.json({ success: false, message: "All fields are required" });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    // Check if OTP matches and is not expired
+    if (user.resetOtp === "" || user.resetOtp !== otp || Date.now() > user.resetOtpExpireAt) {
+      return res.json({ success: false, message: "Invalid or expired OTP" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password and clear OTP fields
+    user.password = hashedPassword;
+    user.resetOtp = '';
+    user.resetOtpExpireAt = 0;
+    await user.save();
+
+    return res.json({ success: true, message: "Password has been reset successfully" });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
