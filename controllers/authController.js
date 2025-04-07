@@ -13,7 +13,7 @@ export const register = async (req, res) => {
     const exsistingUser = await userModel.findOne({ email });
 
     if (exsistingUser) {
-      return res.json({ success: false, message: "User already exists" });
+      return res.json({ success: false, message: `This ${email} is Already exists` });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -81,7 +81,7 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    return res.json({ success: true });
+    return res.json({ success: true,message: "User Login successfully",token });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }

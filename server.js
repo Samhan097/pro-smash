@@ -24,6 +24,8 @@ app.get("/test", (req, res) => {
 });
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
+// app.use('/api/matches',matchRouter)
+// app.use('/api/messages',messageRouter)
 
 app.listen(port,'0.0.0.0', () => {
   console.log(`Server Started on PORT http://localhost:${port}`);
