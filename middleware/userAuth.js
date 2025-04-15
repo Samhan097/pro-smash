@@ -1,21 +1,32 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
-const userAuth = async(req,res,next) =>{
-    const {token} = req.cookies
+const userAuth = async (req, res, next) => {
+  let token = req.cookies?.token;
 
-    if(!token){
+  // Also check Authorization header
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: "No token provided. Please login." });
+  }
+
+  try {
+    const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (tokenDecode.id) {
+      req.user = { userId: tokenDecode.id };
+      next();
+    } else {
+      return res.status(400).json({ success: false, message: "Not Authorized. Login Again." });
     }
-    try {
-        const tokenDecode = jwt.verify(token,process.env.JWT_SECRET)
-        if(tokenDecode.id){
-            req.body.userId = tokenDecode.id
-        }else{
-        return res.status(400).json({ success: false, message: "Not Authorized. Login Again." })
-        }
-        next()
-    } catch (error) {
-        return res.status(400).json({ success: false, message: error.message }); 
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ success: false, message: "Session expired. Please login again." });
     }
-}
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
 
-export default userAuth
+export default userAuth;

@@ -5,6 +5,10 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import smashRouter from "./routes/smashRoutes.js";
+import inboxRouter from "./routes/inboxRoutes.js";
+import dashboardRouter from "./routes/dashboardRoutes.js";
+import exploreRouter from "./routes/exploreRoutes.js"; 
 
 dotenv.config();
 const app = express();
@@ -24,9 +28,11 @@ app.get("/test", (req, res) => {
 });
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
-// app.use('/api/matches',matchRouter)
-// app.use('/api/messages',messageRouter)
+app.use('/api/smash',smashRouter)
+app.use('/api/dashboard',dashboardRouter)
+app.use('/api/inbox',inboxRouter)
+app.use('/api/explore',exploreRouter)
 
-app.listen(port,'0.0.0.0', () => {
+app.listen(port,'0.0.0.0', () => { 
   console.log(`Server Started on PORT http://localhost:${port}`);
 });

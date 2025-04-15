@@ -14,7 +14,6 @@ const messageSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
-    trim: true,
   },
   timestamp: {
     type: Date,
@@ -24,7 +23,15 @@ const messageSchema = new mongoose.Schema({
     type: String,
     enum: ['sent', 'delivered', 'read'],
     default: 'sent',
-  }
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false, // soft delete feature
+  },
+  attachment: {
+    type: String, // URL if you want to allow file uploads in future
+    default: "",
+  },
 });
 
 const Message = mongoose.model('Message', messageSchema);

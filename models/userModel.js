@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+// import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,17 +50,17 @@ const userSchema = new mongoose.Schema(
       enum: ["Sri Lanka", "USA", "Canada", "UK", "India", "Germany", "France"],
       default: "Sri Lanka",
     },
-    interests: {
+    interests: [
+    {
       text: { type: String },
-    image: { type: String },
-      default: [],
-    },
-    description: { type: String, default: "" },
-    alternateImage: { type: String, default: "" },
-
+      image: { type: String }
+    }
+  ]
+,
+    
     sportProfile: {
-    //   description: { type: String, default: "" },
-    //   alternateImage: { type: String, default: "" },
+      description: { type: String, default: "" },
+      alternateImage: { type: String, default: "" },
       socialMedia: {
         instagram: { type: String, default: "" },
         facebook: { type: String, default: "" },
@@ -67,23 +68,11 @@ const userSchema = new mongoose.Schema(
         linkedin: { type: String, default: "" },
       },
     },
-    likes:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
-        }
-    ],
-    dislikes:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
-        }
-    ],
-    matches:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
-        }
+    matches: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
     ],
     verifyOtp: {
       type: String,
@@ -111,15 +100,15 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save",async function (next) {
-    this.password = await bcrypt.hash(this.password,10)
-    next()
-})
+// userSchema.pre("save", async function (next) {
+//   this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
 
-userSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword,this.password)
-}
+// userSchema.methods.matchPassword = async function (enteredPassword) {
+//   return await bcrypt.compare(enteredPassword, this.password);
+// };
 
-const userModel = mongoose.models.user || mongoose.model("user", userSchema);
+const userModel = mongoose.models.user || mongoose.model("User", userSchema);
 
 export default userModel;
